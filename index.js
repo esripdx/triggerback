@@ -33,4 +33,19 @@ app.post('*', function(req, res){
 
 server.listen(port);
 
+primus.on('connection', function (spark) {
+
+  var id = setInterval(function() {
+      spark.send(JSON.stringify(new Date()), function() {  });
+  }, 1000);
+
+  console.log('websocket connection open');
+
+  spark.on('close', function() {
+      console.log('websocket connection close');
+      clearInterval(id);
+  });
+
+});
+
 console.log('triggerback listening on ' + port);
