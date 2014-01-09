@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>triggerback</title>
+  <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h2>triggerback</h2>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>hello!</strong> set your callback to this domain to test geotrigger callbacks.
+    </div>
+
+    <div class="callbacks"></div>
+  </div>
+
+  <script src="/js/jquery.js"></script>
+  <script src="/primus/primus.io.js"></script>
+  <script>
+    var primus = new Primus('http://localhost:3000/');
+
+    primus.on('data', function (data) {
+      $('.callbacks').append('<pre>' + JSON.stringify(data, undefined, 2) + '</pre>');
+    });
+
+    primus.on('open', function () {
+      $('.page-header h2').append(' <small>is listening on ' + window.location.origin + '</small>');
+    });
+  </script>
+</body>
+</html>

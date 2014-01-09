@@ -1,0 +1,28 @@
+{
+  "name": "triggerback",
+  "version": "0.0.0",
+  "description": "Sample callback server for the Geotrigger Service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/geoloqi/triggerback.git"
+  },
+  "author": "Esri Portland R&D Center <portland@esri.com>",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/geoloqi/triggerback/issues"
+  },
+  "homepage": "https://github.com/geoloqi/triggerback",
+  "dependencies": {
+    "express": "~3.4.7",
+    "primus.io": "~2.0.3",
+    "ws": "~0.4.31"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm":  "1.3.x"
+  }
+}
