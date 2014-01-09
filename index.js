@@ -6,6 +6,7 @@ var http = require('http');
 var app = express();
 var server = http.createServer(app);
 var primus = new Primus(server, { transformer: 'websockets', parser: 'JSON' });
+var callbacks = primus.channel('callbacks');
 var port = process.env.PORT || 3000;
 
 app
@@ -27,7 +28,7 @@ app
   .use(app.router);
 
 app.post('*', function(req, res){
-  primus.write(req.body);
+  callbacks.write(req.body);
   res.end();
 });
 

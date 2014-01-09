@@ -22,8 +22,9 @@
   <script src="/primus/primus.io.js"></script>
   <script>
     var primus = new Primus(location.origin.replace(/^http/, 'ws'));
+    var callbacks = primus.channel('callbacks');
 
-    primus.on('data', function (data) {
+    callbacks.on('data', function (data) {
       $('.callbacks').append('<pre>' + JSON.stringify(data, undefined, 2) + '</pre>');
     });
 
