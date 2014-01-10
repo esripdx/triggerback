@@ -11,6 +11,7 @@ var server = http.createServer(function (req, res) {
       try {
         data = JSON.parse(data);
       } catch (e) {}
+      console.log(data);
       callbacks.write(data);
     });
     res.writeHead(200, {'Content-Type': 'text/plain'});
