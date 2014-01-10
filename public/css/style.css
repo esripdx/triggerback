@@ -1,0 +1,24 @@
+.navbar-brand.title a {
+  color: #ddd;
+  text-decoration: none;
+}
+.navbar-brand.title a:hover {
+  color: #fff;
+}
+.navbar-inverse .navbar-brand,
+.navbar-inverse .navbar-brand:hover {
+  color: #ccc;
+}
+.navbar-inverse .navbar-brand small {
+  color: #999;
+}
+.callback-content pre {
+  display: none;
+  font-size: 11px;
+}
+.callback-content pre.active {
+  display: block;
+}
+a.list-group-item {
+  cursor: pointer;
+}
