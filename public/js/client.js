@@ -1,10 +1,34 @@
 var primus = new Primus(location.origin.replace(/^http/, 'ws'));
-var callbacks = primus.channel('callbacks');
+var url = window.location.toString();
+var id = window.location.pathname.substring(1);
+var channel = primus.channel(id);
+var notify = {};
 
-callbacks.on('data', function (data) {
+notify.success = function () {
+  $('.status').text('is listening at ' + url).fadeIn();
+
+  var alerts = $('.alerts');
+  var alert = $('<div class="alert alert-success"></div>');
+
+  alerts.empty();
+
+  alert
+    .html('<strong>Connected!</strong> Try running <code>curl -X POST -d "foo=baz" ' + url + '</code> to get some feedback.')
+    .hide()
+    .prependTo('.alerts')
+    .fadeIn();
+};
+
+function processData (data) {
+  $('.alerts').empty();
+
+  try {
+    data = JSON.stringify(data, undefined, 2);
+  } catch (e) {}
+
   var id = new Date().getTime();
   var item = $('<a class="list-group-item" data-id="' + id + '">' + new Date().toLocaleTimeString() + '</a>');
-  var content = $('<pre data-id="' + id + '">' + JSON.stringify(data, undefined, 2) + '</pre>');
+  var content = $('<pre data-id="' + id + '">' + data + '</pre>');
 
   if ($('.waiting').length) {
     $('.waiting').remove();
@@ -14,7 +38,7 @@ callbacks.on('data', function (data) {
 
   item.hide().appendTo('.callback-nav').fadeIn();
   content.appendTo('.callback-content');
-});
+}
 
 $('.callback-nav').on('click', 'a[data-id]', function(e){
   e.preventDefault();
@@ -25,7 +49,7 @@ $('.callback-nav').on('click', 'a[data-id]', function(e){
 });
 
 primus.on('open', function () {
-  $('.status').delay(750).fadeOut(function(){
-    $(this).text('is listening at ' + window.location.origin).fadeIn();
-  });
+  notify.success();
 });
+
+channel.on('data', processData);

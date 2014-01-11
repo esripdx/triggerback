@@ -10,31 +10,29 @@
 <body>
   <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
     <div class="navbar-header">
-      <div class="navbar-brand title"><i class="fa fa-globe"></i> <a href="/">GeoBin</a></div>
+      <div class="navbar-brand title"><i class="fa fa-globe"></i> <a href="/">GeoBin</a> <small class="status">is trying to connect</small></div>
     </div>
   </nav>
 
   <div class="container">
     <div class="row">
-      <div class="col-md-12">
-        <div class="page-header">
-          <h1>Inspect HTTP Requests with Geographic Data</h1>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-9">
-        <p><a href="/new" class="btn btn-primary" role="button"><i class="fa fa-plus-circle"></i> Create a new GeoBin</a></p>
-      </div>
       <div class="col-md-3">
         <div class="panel panel-default">
-          <div class="panel-heading"><i class="fa fa-clock-o"></i> History</div>
+          <div class="panel-heading">Requests</div>
           <ul class="list-group callback-nav">
-            <li href="/abc" class="list-group-item waiting">none yet</li>
+            <li class="list-group-item waiting">none yet</li>
           </ul>
         </div>
       </div>
+      <div class="col-md-9">
+        <div class="alerts"></div>
+        <div class="callback-content"></div>
+      </div>
     </div>
   </div>
+
+  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="/primus/primus.io.js"></script>
+  <script src="/js/client.js"></script>
 </body>
 </html>
