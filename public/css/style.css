@@ -22,3 +22,9 @@
 a.list-group-item {
   cursor: pointer;
 }
+
+.json .string { color: green; }
+.json .number { color: darkorange; }
+.json .boolean { color: blue; }
+.json .null { color: magenta; }
+.json .key { color: red; }
