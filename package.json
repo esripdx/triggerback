@@ -1,7 +1,7 @@
 {
-  "name": "triggerback",
+  "name": "geobin.io",
   "version": "0.0.0",
-  "description": "Sample callback server for the Geotrigger Service",
+  "description": "Inspect HTTP Requests with Geographic Data",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
