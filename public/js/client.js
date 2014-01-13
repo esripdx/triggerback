@@ -17,7 +17,6 @@ if (geobin.support.localStorage) {
   if (Object.keys(binStore).length) {
     for (var id in binStore) {
       if (binStore.hasOwnProperty(id)) {
-        console.log(id);
         var ts = new Date(+id).toLocaleString();
         var item = $('<a class="list-group-item" data-id="' + id + '">' + ts + '</a>');
         var content = $('<pre class="json" data-id="' + id + '">' + JSON.stringify(binStore[id], undefined, 2) + '</pre>');
@@ -40,10 +39,14 @@ notify.success = function () {
   var alerts = $('.alerts');
   var alert = $('<div class="alert alert-success"></div>');
 
+  var sampleJson = '{"geo":{"latitude":"45.5165","longitude":"-122.6764"}}';
+
+  var code = 'curl -X POST -H "Content-Type: application/json" -d \'' + sampleJson + '\' ' + url;
+
   alerts.empty();
 
   alert
-    .html('<strong>Connected!</strong> Try running <code>curl -X POST -d "foo=baz" ' + url + '</code> to get some feedback.')
+    .html('<strong>Connected!</strong> Try running <code>' + code + '</code> to get some feedback.')
     .hide()
     .prependTo('.alerts')
     .fadeIn();
@@ -80,7 +83,6 @@ function processData (data) {
 }
 
 function syntaxHighlight(json) {
-  console.log('highlighting');
   json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
     var cls = 'number';
@@ -117,13 +119,11 @@ function initMap () {
 }
 
 function searchForGeo (data) {
-  console.log('hi', data);
   if (Object.prototype.toString.call(data) !== '[object Object]') {
     return;
   }
   for (var key in data) {
     if (data.hasOwnProperty(key)) {
-      console.log(key);
       var obj = data[key];
       if (key === 'geo') {
         mapGeo(obj);
@@ -134,18 +134,27 @@ function searchForGeo (data) {
   }
 }
 
+// mapping according to geo object spec for now
+// https://developers.arcgis.com/en/geotrigger-service/api-reference/geo-objects/
+// only doing point, point+radius, & geojson (polygon/multipolygon)
 function mapGeo (geo) {
   var layer;
-  if (geo.latitude, geo.longitude, geo.distance) {
+  if (geo.latitude && geo.longitude && geo.distance) {
     layer = new L.Circle([geo.latitude, geo.longitude], geo.distance);
+  }
+  else if (geo.latitude && geo.longitude) {
+    layer = new L.Marker([geo.latitude, geo.longitude]);
   }
   else if (geo.geojson) {
     layer = new L.GeoJSON(geo.geojson);
   }
-  layer.addTo(features);
-  var bounds = layer.getBounds();
 
-  map.fitBounds(bounds);
+  layer.addTo(features);
+
+  if (geo.distance || geo.geojson) {
+    var bounds = layer.getBounds();
+    map.fitBounds(bounds);
+  }
 }
 
 $('.callback-nav').on('click', 'a[data-id]', function(e){
