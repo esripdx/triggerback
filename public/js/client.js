@@ -5,6 +5,10 @@ var url = window.location.toString();
 var binId = window.location.pathname.substring(1);
 var channel = primus.channel(binId);
 var notify = {};
+var map;
+var features;
+
+initMap();
 
 if (geobin.support.localStorage) {
   var binStore = geobin.store.history[binId] = geobin.store.history[binId] || {};
@@ -13,9 +17,11 @@ if (geobin.support.localStorage) {
   if (Object.keys(binStore).length) {
     for (var id in binStore) {
       if (binStore.hasOwnProperty(id)) {
+        console.log(id);
         var ts = new Date(+id).toLocaleString();
         var item = $('<a class="list-group-item" data-id="' + id + '">' + ts + '</a>');
-        var content = $('<pre class="json" data-id="' + id + '">' + syntaxHighlight(binStore[id]) + '</pre>');
+        var content = $('<pre class="json" data-id="' + id + '">' + JSON.stringify(binStore[id], undefined, 2) + '</pre>');
+        searchForGeo(binStore[id]);
 
         if ($('.waiting').length) {
           $('.waiting').remove();
@@ -46,19 +52,22 @@ notify.success = function () {
 function processData (data) {
   $('.alerts').empty();
 
-  try {
-    data = JSON.stringify(data, undefined, 2);
-  } catch (e) {}
-
   var id = new Date().getTime();
   var ts = new Date(id).toLocaleString();
-  var item = $('<a class="list-group-item" data-id="' + id + '">' + ts + '</a>');
-  var content = $('<pre class="json" data-id="' + id + '">' + syntaxHighlight(data) + '</pre>');
 
   if (geobin.support.localStorage) {
     geobin.store.history[binId][id] = data;
     geobin.save();
   }
+
+  try {
+    data = JSON.stringify(data, undefined, 2);
+  } catch (e) {}
+
+  searchForGeo(JSON.parse(data));
+
+  var item = $('<a class="list-group-item" data-id="' + id + '">' + ts + '</a>');
+  var content = $('<pre class="json" data-id="' + id + '">' + data + '</pre>');
 
   if ($('.waiting').length) {
     $('.waiting').remove();
@@ -88,6 +97,55 @@ function syntaxHighlight(json) {
     }
     return '<span class="' + cls + '">' + match + '</span>';
   });
+}
+
+function initMap () {
+  map = L.map('map', {
+    center: [0,0],
+    zoom: 1,
+    scrollWheelZoom: true,
+    zoomControl: false
+  });
+
+  features = new L.FeatureGroup();
+
+  map.addLayer(features);
+
+  new L.Control.Zoom({ position: 'topright' }).addTo(map);
+
+  L.esri.basemapLayer('Streets').addTo(map);
+}
+
+function searchForGeo (data) {
+  console.log('hi', data);
+  if (Object.prototype.toString.call(data) !== '[object Object]') {
+    return;
+  }
+  for (var key in data) {
+    if (data.hasOwnProperty(key)) {
+      console.log(key);
+      var obj = data[key];
+      if (key === 'geo') {
+        mapGeo(obj);
+      } else {
+        searchForGeo(obj);
+      }
+    }
+  }
+}
+
+function mapGeo (geo) {
+  var layer;
+  if (geo.latitude, geo.longitude, geo.distance) {
+    layer = new L.Circle([geo.latitude, geo.longitude], geo.distance);
+  }
+  else if (geo.geojson) {
+    layer = new L.GeoJSON(geo.geojson);
+  }
+  layer.addTo(features);
+  var bounds = layer.getBounds();
+
+  map.fitBounds(bounds);
 }
 
 $('.callback-nav').on('click', 'a[data-id]', function(e){

@@ -23,6 +23,10 @@ a.list-group-item {
   cursor: pointer;
 }
 
+.bin-wrapper { margin: 0 20px; }
+
+#map { height: 400px; }
+
 .json .string { color: green; }
 .json .number { color: darkorange; }
 .json .boolean { color: blue; }
