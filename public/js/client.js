@@ -1,6 +1,6 @@
 (function(){
 
-var primus = new Primus(location.origin.replace(/^http/, 'ws'));
+var primus = new Primus('/');
 var url = window.location.toString();
 var binId = window.location.pathname.substring(1);
 var channel = primus.channel(binId);
