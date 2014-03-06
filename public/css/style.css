@@ -32,3 +32,11 @@ a.list-group-item {
 .json .boolean { color: blue; }
 .json .null { color: magenta; }
 .json .key { color: red; }
+
+.panel-heading[data-toggle="collapse"] {
+  cursor: pointer;
+}
+
+.panel-heading[data-toggle="collapse"]:hover {
+  color: #42abca;
+}
